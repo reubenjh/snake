@@ -44,8 +44,12 @@
 
         function moveSnake() {
             /* Initially going right
-             */
             snakeX += snakeSpeed;
+            */
+
+            /* Make snake go up
+             */
+            snakeY -= snakeSpeed;
 
             /* Wrap through horizontal walls
              */
@@ -54,6 +58,14 @@
             }
             if (snakeX < 0) {
                 snakeX += canvas.width;
+            }
+            /* Wrap through vertical walls
+             */
+            if (snakeY > canvas.height) {
+                snakeY -= canvas.height;
+            }
+            if (snakeY < 0) {
+                snakeY += canvas.height;
             }
 
         }
