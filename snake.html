@@ -6,6 +6,7 @@
         /* NEXT STEPS:
          * - CREATE ARRAY OF SNAKE COORDINATES
          * - EACH TIME HE MOVES, PUSH() NEW COORDINATES AND SHIFT() OLD
+         * - OLD COORDINATE STORED IN LASTCOORD
          * - CREATE APPLE
          * - SET APPLE TO RANDOM POSITION
          * - WRITE APPLECOLLISION CODE (grow?)
@@ -29,9 +30,9 @@
         var snakeX = 300 - (SNAKE_THICKNESS/2);
         var snakeY = 300 - (SNAKE_THICKNESS/2);
         var snakeSpeed = 4;
-        /* Initially right for now
-         */
-        var snakeDirection = 'right';
+        var snakeDirection;
+        var snakeCoords = [];
+        
         
 
 
@@ -48,6 +49,11 @@
              */
             canvasContext.fillStyle = 'white';
             canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
+            /* Record its current coords
+             */
+            snakeCoords.push({x: snakeX, y: snakeY});
+            console.log(snakeCoords);
+
 
             /* Setting initial speed - start direction to come later
              */
