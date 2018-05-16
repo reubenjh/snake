@@ -2,13 +2,82 @@
 <html lang="en">
 <head>
     <script>
-        // Global variables
+
+        var canvas;
+        var canvasContext;
+
+        const SNAKE_THICKNESS = 10;
+        /* Have to hardcode width/2 as width isn't set until 
+         * window.onload
+         */
+        var snakeX = 300 - (SNAKE_THICKNESS/2);
+        var snakeY = 300 - (SNAKE_THICKNESS/2);
+        var snakeSpeed = 4;
+        
+
+
+        window.onload = function() {
+            /* Access canvas to draw on
+             */
+            canvas = document.getElementById('myCanvas');
+            canvasContext = canvas.getContext('2d');
+            /* Black out the canvas
+             */
+            canvasContext.fillStyle = 'black';
+            canvasContext.fillRect(0,0,canvas.width, canvas.height);
+            /* Draw initial snake
+             */
+            canvasContext.fillStyle = 'white';
+            canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
+            /* Setting initial speed - start direction to come later
+             */
+            var framesPerSecond = 30
+            setInterval(function() {
+                moveSnake();
+                drawSnake();
+            }, 1000/framesPerSecond);
+        
+        
+        
+        }
+
+
+        function moveSnake() {
+            /* Initially going right
+             */
+            snakeX += snakeSpeed;
+
+            /* Wrap through horizontal walls
+             */
+            if (snakeX > canvas.width) {
+                snakeX -= canvas.width;
+            }
+            if (snakeX < 0) {
+                snakeX += canvas.width;
+            }
+
+        }
+
+        function drawSnake() {
+            /* Snake not growing so redraw same size in new position,
+             * currently blanking whole page but I don't think that will
+             * work for fluid motion and directional changes, may need to
+             * loop through array of snakePositions and draw a 1x1 pixel
+             * everywhere the snake is not. Actually, could just redraw the
+             * position balck that gets shift()'d off the snakePositions array.
+             */
+            canvasContext.fillStyle = 'black';
+            canvasContext.fillRect(0,0,canvas.width, canvas.height);
+
+            canvasContext.fillStyle = 'white';
+            canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
+        }
     
     
     </script>
 </head>
 
 <body>
-    <canvas id="myCanvas" width="800" height="800"></canvas>
+    <canvas id="myCanvas" width="600" height="600"></canvas>
 </body>
 </html>
