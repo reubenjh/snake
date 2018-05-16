@@ -13,6 +13,9 @@
         var snakeX = 300 - (SNAKE_THICKNESS/2);
         var snakeY = 300 - (SNAKE_THICKNESS/2);
         var snakeSpeed = 4;
+        /* Initially right for now
+         */
+        var snakeDirection = 'right';
         
 
 
@@ -29,6 +32,7 @@
              */
             canvasContext.fillStyle = 'white';
             canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
+
             /* Setting initial speed - start direction to come later
              */
             var framesPerSecond = 30
@@ -36,20 +40,53 @@
                 moveSnake();
                 drawSnake();
             }, 1000/framesPerSecond);
-        
-        
+            
+            /* Add directional arrow controls
+             */
+            document.addEventListener('keydown', function(event) {
+                // Prevent default page scrolling
+                event.preventDefault();
+                // Right key
+                if (event.which == 39) {
+                    snakeDirection = 'right';
+                }
+                // Left key
+                if (event.which == 37) {
+                    snakeDirection = 'left';
+                }
+                // Down key
+                if (event.which == 40) {
+                    snakeDirection = 'down';
+                }
+                // Up key
+                if (event.which == 38) {
+                    snakeDirection = 'up';
+                }
+            });
         
         }
 
 
-        function moveSnake() {
-            /* Initially going right
-            snakeX += snakeSpeed;
-            */
 
-            /* Make snake go up
-             */
-            snakeY -= snakeSpeed;
+        function goThisWay(snakeDirection) {
+            if (snakeDirection == 'right') {
+                snakeX += snakeSpeed;
+            }
+            if (snakeDirection == 'left') {
+                snakeX -= snakeSpeed;
+            }
+            if (snakeDirection == 'down') {
+                snakeY += snakeSpeed;
+            }
+            if (snakeDirection == 'up') {
+                snakeY -= snakeSpeed;
+            }
+        }
+
+
+        function moveSnake() {
+            goThisWay(snakeDirection);
+
 
             /* Wrap through horizontal walls
              */
