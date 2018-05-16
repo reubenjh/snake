@@ -45,6 +45,8 @@
              */
             canvasContext.fillStyle = 'black';
             canvasContext.fillRect(0,0,canvas.width, canvas.height);
+
+
             /* Draw initial snake
              */
             canvasContext.fillStyle = 'white';
@@ -55,14 +57,6 @@
             console.log(snakeCoords);
 
 
-            /* Setting initial speed - start direction to come later
-             */
-            var framesPerSecond = 30
-            setInterval(function() {
-                moveSnake();
-                drawSnake();
-            }, 1000/framesPerSecond);
-            
             /* Add directional arrow controls
              */
             document.addEventListener('keydown', function(event) {
@@ -101,29 +95,22 @@
                     snakeDirection = 'up';
                 }
             });
+
+
+            /* Setting initial speed
+             */
+            var framesPerSecond = 30
+            setInterval(function() {
+                moveSnake();
+                drawSnake();
+            }, 1000/framesPerSecond);
+            
         }
 
-
-
-        function goThisWay(snakeDirection) {
-            if (snakeDirection == 'right') {
-                snakeX += snakeSpeed;
-            }
-            if (snakeDirection == 'left') {
-                snakeX -= snakeSpeed;
-            }
-            if (snakeDirection == 'down') {
-                snakeY += snakeSpeed;
-            }
-            if (snakeDirection == 'up') {
-                snakeY -= snakeSpeed;
-            }
-        }
 
 
         function moveSnake() {
             goThisWay(snakeDirection);
-
 
             /* Wrap through horizontal walls
              */
@@ -141,8 +128,26 @@
             if (snakeY < 0) {
                 snakeY += canvas.height;
             }
-
         }
+
+
+        
+        function goThisWay(snakeDirection) {
+            if (snakeDirection == 'right') {
+                snakeX += snakeSpeed;
+            }
+            if (snakeDirection == 'left') {
+                snakeX -= snakeSpeed;
+            }
+            if (snakeDirection == 'down') {
+                snakeY += snakeSpeed;
+            }
+            if (snakeDirection == 'up') {
+                snakeY -= snakeSpeed;
+            }
+        }
+
+        
 
         function drawSnake() {
             /* Snake not growing so redraw same size in new position,
