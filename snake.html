@@ -48,18 +48,34 @@
                 event.preventDefault();
                 // Right key
                 if (event.which == 39) {
+                    // Snake can't reverse
+                    if (snakeDirection == 'left') {
+                        return;
+                    } else
                     snakeDirection = 'right';
                 }
                 // Left key
                 if (event.which == 37) {
+                    // Snake can't reverse
+                    if (snakeDirection == 'right') {
+                        return;
+                    } else
                     snakeDirection = 'left';
                 }
                 // Down key
                 if (event.which == 40) {
+                    // Snake can't reverse
+                    if (snakeDirection == 'up') {
+                        return;
+                    } else
                     snakeDirection = 'down';
                 }
                 // Up key
                 if (event.which == 38) {
+                    // Snake can't reverse
+                    if (snakeDirection == 'down') {
+                        return;
+                    } else
                     snakeDirection = 'up';
                 }
             });
