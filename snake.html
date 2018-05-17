@@ -2,46 +2,28 @@
 <html lang="en">
 <head>
     <script>
-
         /* NEXT STEPS:
-         * x CREATE ARRAY OF SNAKE COORDINATES
-         * x EACH TIME HE MOVES, PUSH() NEW COORDINATES AND SHIFT() OLD
-         * x OLD COORDINATE STORED IN LASTCOORD
-
-         * - error happening with blanking snake head square, 
-         * it trails old pixels left behind or that the browser 
-         * can't keep up with.
-         * - Next idea to try: blank whole screen each move then draw
-         * snake head, then body
-
-         * - CREATE APPLE
-         * - SET APPLE TO RANDOM POSITION
          * - WRITE APPLECOLLISION CODE (grow?)
          * - WRITE SNAKECOLLISION CODE (end of game?)
          * - TITLE SCREEN?
          * - SPEED?
          */
 
-
-
-
-
-
         var canvas;
         var canvasContext;
 
-        const SNAKE_THICKNESS = 10;
         /* Have to hardcode width/2 as width isn't set until 
          * window.onload
          */
+        const SNAKE_THICKNESS = 10;
         var snakeX = 300 - (SNAKE_THICKNESS/2);
         var snakeY = 300 - (SNAKE_THICKNESS/2);
-        var snakeSpeed = 4;
-        var snakeDirection = '';
-        var snakeHead = {};
         var snakeBody = [];
-        // var lastSnakeCoords = [];
+        var snakeSpeed = 3;
+        var snakeDirection = '';
         
+        var apple = {};
+        const APPLE_THICKNESS = 8;
         
 
 
@@ -50,24 +32,11 @@
              */
             canvas = document.getElementById('myCanvas');
             canvasContext = canvas.getContext('2d');
-            /* Black out the canvas
-             */
-            canvasContext.fillStyle = 'black';
-            canvasContext.fillRect(0,0,canvas.width, canvas.height);
 
-
-            /* Draw initial snake
-             */
-            canvasContext.fillStyle = 'white';
-            canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
-            /* Record its current head coords and last position as
-             * its not moving
-             */
-            snakeHead.x = snakeX;
-            snakeHead.y = snakeY;
-            //lastSnakeCoords.push(snakeHead);
-
-
+            clearCanvas();
+            drawSnakeHead();
+            generateApple();
+            drawApple();
             /* Add directional arrow controls
              */
             document.addEventListener('keydown', function(event) {
@@ -113,39 +82,109 @@
             var framesPerSecond = 30
             setInterval(function() {
                 moveSnake();
-                drawSnake();
-            }, 1000/framesPerSecond);
-            
+                drawEverything();
+            }, 1000/framesPerSecond);   
         }
 
+
+        function drawSnakeHead() {
+            canvasContext.fillStyle = 'white';
+            canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
+        }
+        
+
+        function clearCanvas() {
+            canvasContext.fillStyle = 'black';
+            canvasContext.fillRect(0,0,canvas.width, canvas.height);
+        }
+
+
+        function generateApple() {
+            apple.x = Math.floor(Math.random()*(canvas.width+1));
+            apple.y = Math.floor(Math.random()*(canvas.height+1));
+            checkLegalApple(apple.x, apple.y)
+        }
+
+
+        function drawApple() {
+            canvasContext.fillStyle = 'green';
+            canvasContext.beginPath();
+            canvasContext.arc(apple.x, apple.y, APPLE_THICKNESS/2, 0, Math.PI*2, true);
+            canvasContext.fill();
+        }
+
+
+        function checkLegalApple (appleX, appleY) {
+            /* Checking its not squished up against the side
+             */
+            if (appleX - (APPLE_THICKNESS*2) < 0) {
+                return generateApple()
+            }
+            if (appleX + (APPLE_THICKNESS*2) > canvas.width) {
+                return generateApple();
+            }
+            if (appleY - (APPLE_THICKNESS*2) < 0) {
+                return generateApple();
+            }
+            if (appleY + (APPLE_THICKNESS*2) > canvas.height) {
+                return generateApple();
+            }
+
+            checkCollision(appleX, appleY);
+        }
+
+
+        function checkCollision(appleX, appleY) {
+            /* Checking its not underneath snake head
+             */
+            if (appleX >= snakeX && appleX <= snakeX+SNAKE_THICKNESS) {
+                if (appleY >= snakeY && appleY <= snakeY+SNAKE_THICKNESS) {
+                    return generateApple();
+                }
+            }
+            /* Checking its not underneath snake body
+             */
+            for (i = 0; i < snakeBody.length; i++) {
+                if (appleX >= snakeBody[i].x && appleX <= snakeBody[i].x+SNAKE_THICKNESS) {
+                    if (appleY >= snakeBody[i].y && appleY <= snakeBody[i].y+SNAKE_THICKNESS) {
+                       return generateApple();
+                    }
+                }
+            }
+            /*
+            if (snakeDirection != '') {
+                growSnake();
+            }
+            */
+        }
+
+        /*
+        function growSnake() {
+            snakeBody
+        }
+        */
 
 
         function moveSnake() {
             if (snakeDirection != '') {
-                /* Record its old head position, making a local
-                 * variable with the current head position to store
-                 * so it doesn't change when global head position moves.
-                 */
-                //var localHeadPos = {};
-                //localHeadPos.x = snakeHead.x;
-                //localHeadPos.y = snakeHead.y;
-                /* First move will clear the storage of global snake 
-                 * head position. Following moves will clear the previous
-                 * head position.
-                 */
-                //lastSnakeCoords.shift()
-                //lastSnakeCoords.push(localHeadPos);
-                /* Move him in speicified direction
-                 */
                 goThisWay(snakeDirection);
             }
-
-
-            /* Overwrite head with its new head position
-            */
-            snakeHead.x = snakeX;
-            snakeHead.y = snakeY;
+            checkCollision(apple.x, apple.y);
+            // think I need to grow snake here? Or do I need to be storing
+            // old SnakeX and SnakeY coordinates in another variable to draw.
         }
+
+
+
+
+
+//ABOVE 3 green things is where I'm up to
+
+
+
+
+
+
 
 
         
@@ -183,22 +222,12 @@
 
 
 
-        function drawSnake() {
+        function drawEverything() {
             if (snakeDirection != '') {
-                /* OLD CODE Black out old snake head
-                */
-                //canvasContext.fillStyle = 'black';
-                //canvasContext.fillRect(lastSnakeCoords[0].x,lastSnakeCoords[0].y,SNAKE_THICKNESS,SNAKE_THICKNESS);
+                clearCanvas();
+                drawApple();
+                drawSnakeHead();
 
-                /* Black out canvas
-                */
-                canvasContext.fillStyle = 'black';
-                canvasContext.fillRect(0,0,canvas.width,canvas.height);
-
-                /* Draw new snake head
-                */
-                canvasContext.fillStyle = 'white';
-                canvasContext.fillRect(snakeHead.x,snakeHead.y,SNAKE_THICKNESS,SNAKE_THICKNESS);
                 /* If snake has a body, draw the body
                 */
                 if (snakeBody.length != 0) {
