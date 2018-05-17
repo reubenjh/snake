@@ -40,7 +40,7 @@
         var snakeDirection = '';
         var snakeHead = {};
         var snakeBody = [];
-        var lastSnakeCoords = [];
+        // var lastSnakeCoords = [];
         
         
 
@@ -65,7 +65,7 @@
              */
             snakeHead.x = snakeX;
             snakeHead.y = snakeY;
-            lastSnakeCoords.push(snakeHead);
+            //lastSnakeCoords.push(snakeHead);
 
 
             /* Add directional arrow controls
@@ -126,15 +126,15 @@
                  * variable with the current head position to store
                  * so it doesn't change when global head position moves.
                  */
-                var localHeadPos = {};
-                localHeadPos.x = snakeHead.x;
-                localHeadPos.y = snakeHead.y;
+                //var localHeadPos = {};
+                //localHeadPos.x = snakeHead.x;
+                //localHeadPos.y = snakeHead.y;
                 /* First move will clear the storage of global snake 
                  * head position. Following moves will clear the previous
                  * head position.
                  */
-                lastSnakeCoords.shift()
-                lastSnakeCoords.push(localHeadPos);
+                //lastSnakeCoords.shift()
+                //lastSnakeCoords.push(localHeadPos);
                 /* Move him in speicified direction
                  */
                 goThisWay(snakeDirection);
@@ -185,10 +185,16 @@
 
         function drawSnake() {
             if (snakeDirection != '') {
-                /* Black out old snake head
+                /* OLD CODE Black out old snake head
+                */
+                //canvasContext.fillStyle = 'black';
+                //canvasContext.fillRect(lastSnakeCoords[0].x,lastSnakeCoords[0].y,SNAKE_THICKNESS,SNAKE_THICKNESS);
+
+                /* Black out canvas
                 */
                 canvasContext.fillStyle = 'black';
-                canvasContext.fillRect(lastSnakeCoords[0].x,lastSnakeCoords[0].y,SNAKE_THICKNESS,SNAKE_THICKNESS);
+                canvasContext.fillRect(0,0,canvas.width,canvas.height);
+
                 /* Draw new snake head
                 */
                 canvasContext.fillStyle = 'white';
@@ -199,7 +205,7 @@
                     console.log('draw the body code fires');
                     for (var i = 0; i < snakeBody.length; i++) {
                         canvasContext.fillStyle = 'white';
-                        canvasContext.fillRect(snakeBody[0].x,snakeBody[0].y,SNAKE_THICKNESS,SNAKE_THICKNESS);
+                        canvasContext.fillRect(snakeBody[i].x,snakeBody[i].y,SNAKE_THICKNESS,SNAKE_THICKNESS);
                     }
                 }
             }
