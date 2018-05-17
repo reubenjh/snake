@@ -4,9 +4,16 @@
     <script>
 
         /* NEXT STEPS:
-         * - CREATE ARRAY OF SNAKE COORDINATES
-         * - EACH TIME HE MOVES, PUSH() NEW COORDINATES AND SHIFT() OLD
-         * - OLD COORDINATE STORED IN LASTCOORD
+         * x CREATE ARRAY OF SNAKE COORDINATES
+         * x EACH TIME HE MOVES, PUSH() NEW COORDINATES AND SHIFT() OLD
+         * x OLD COORDINATE STORED IN LASTCOORD
+
+         * - error happening with blanking snake head square, 
+         * it trails old pixels left behind or that the browser 
+         * can't keep up with.
+         * - Next idea to try: blank whole screen each move then draw
+         * snake head, then body
+
          * - CREATE APPLE
          * - SET APPLE TO RANDOM POSITION
          * - WRITE APPLECOLLISION CODE (grow?)
@@ -30,8 +37,10 @@
         var snakeX = 300 - (SNAKE_THICKNESS/2);
         var snakeY = 300 - (SNAKE_THICKNESS/2);
         var snakeSpeed = 4;
-        var snakeDirection;
-        var snakeCoords = [];
+        var snakeDirection = '';
+        var snakeHead = {};
+        var snakeBody = [];
+        var lastSnakeCoords = [];
         
         
 
@@ -51,10 +60,12 @@
              */
             canvasContext.fillStyle = 'white';
             canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
-            /* Record its current coords
+            /* Record its current head coords and last position as
+             * its not moving
              */
-            snakeCoords.push({x: snakeX, y: snakeY});
-            console.log(snakeCoords);
+            snakeHead.x = snakeX;
+            snakeHead.y = snakeY;
+            lastSnakeCoords.push(snakeHead);
 
 
             /* Add directional arrow controls
@@ -110,7 +121,47 @@
 
 
         function moveSnake() {
-            goThisWay(snakeDirection);
+            if (snakeDirection != '') {
+                /* Record its old head position, making a local
+                 * variable with the current head position to store
+                 * so it doesn't change when global head position moves.
+                 */
+                var localHeadPos = {};
+                localHeadPos.x = snakeHead.x;
+                localHeadPos.y = snakeHead.y;
+                /* First move will clear the storage of global snake 
+                 * head position. Following moves will clear the previous
+                 * head position.
+                 */
+                lastSnakeCoords.shift()
+                lastSnakeCoords.push(localHeadPos);
+                /* Move him in speicified direction
+                 */
+                goThisWay(snakeDirection);
+            }
+
+
+            /* Overwrite head with its new head position
+            */
+            snakeHead.x = snakeX;
+            snakeHead.y = snakeY;
+        }
+
+
+        
+        function goThisWay(snakeDirection) {
+            if (snakeDirection == 'right') {
+                snakeX += snakeSpeed;
+            }
+            if (snakeDirection == 'left') {
+                snakeX -= snakeSpeed;
+            }
+            if (snakeDirection == 'down') {
+                snakeY += snakeSpeed;
+            }
+            if (snakeDirection == 'up') {
+                snakeY -= snakeSpeed;
+            }
 
             /* Wrap through horizontal walls
              */
@@ -131,37 +182,42 @@
         }
 
 
-        
-        function goThisWay(snakeDirection) {
-            if (snakeDirection == 'right') {
-                snakeX += snakeSpeed;
-            }
-            if (snakeDirection == 'left') {
-                snakeX -= snakeSpeed;
-            }
-            if (snakeDirection == 'down') {
-                snakeY += snakeSpeed;
-            }
-            if (snakeDirection == 'up') {
-                snakeY -= snakeSpeed;
-            }
-        }
-
-        
 
         function drawSnake() {
-            /* Snake not growing so redraw same size in new position,
+            if (snakeDirection != '') {
+                /* Black out old snake head
+                */
+                canvasContext.fillStyle = 'black';
+                canvasContext.fillRect(lastSnakeCoords[0].x,lastSnakeCoords[0].y,SNAKE_THICKNESS,SNAKE_THICKNESS);
+                /* Draw new snake head
+                */
+                canvasContext.fillStyle = 'white';
+                canvasContext.fillRect(snakeHead.x,snakeHead.y,SNAKE_THICKNESS,SNAKE_THICKNESS);
+                /* If snake has a body, draw the body
+                */
+                if (snakeBody.length != 0) {
+                    console.log('draw the body code fires');
+                    for (var i = 0; i < snakeBody.length; i++) {
+                        canvasContext.fillStyle = 'white';
+                        canvasContext.fillRect(snakeBody[0].x,snakeBody[0].y,SNAKE_THICKNESS,SNAKE_THICKNESS);
+                    }
+                }
+            }
+            
+            /* OLD CODE
+             * Snake not growing so redraw same size in new position,
              * currently blanking whole page but I don't think that will
              * work for fluid motion and directional changes, may need to
              * loop through array of snakePositions and draw a 1x1 pixel
              * everywhere the snake is not. Actually, could just redraw the
              * position balck that gets shift()'d off the snakePositions array.
-             */
+             *
             canvasContext.fillStyle = 'black';
             canvasContext.fillRect(0,0,canvas.width, canvas.height);
 
             canvasContext.fillStyle = 'white';
             canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
+            */
         }
     
     
