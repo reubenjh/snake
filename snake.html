@@ -3,27 +3,34 @@
 <head>
     <script>
         /* NEXT STEPS:
-         * - WRITE APPLECOLLISION CODE (grow?)
-         * - WRITE SNAKECOLLISION CODE (end of game?)
-         * - TITLE SCREEN?
-         * - SPEED?
+         * - CONFIRM GENERATE_APPLE CODE CHECKS UNDER SNAKE HEAD AND BODY, IF SO, CALLS ITSELF AGAIN UNTIL A LEGAL_APPLE IS PRODUCED
+         * - CHECK IF DRAWAPPLE IS ONLY DONE UPON FINDING A LEGAL_APPLE, ADD TO END OF LEGAL_APPLE CODE IF SO
+         * - WRITE MOVE BODY CODE WHEN MOVING SNAKE AND BODY HAS LENGTH > 0
+         * - WRITE DRAW BODY CODE
+         * - TITLE SCREEN
          */
 
         var canvas;
         var canvasContext;
 
-        /* Have to hardcode width/2 as width isn't set until 
-         * window.onload
+        /* snakeX and snakeY are just center starting positions.
+         * Have to hardcode canvas.width/2 as 300 as canvas.width isn't 
+         * set until window.onload
          */
         const SNAKE_THICKNESS = 10;
         var snakeX = 300 - (SNAKE_THICKNESS/2);
         var snakeY = 300 - (SNAKE_THICKNESS/2);
+        var snakeHeadCenterPoint = {
+            x: snakeX+(SNAKE_THICKNESS/2),
+            y: snakeY+(SNAKE_THICKNESS/2)
+            }
         var snakeBody = [];
         var snakeSpeed = 3;
         var snakeDirection = '';
         
         var apple = {};
         const APPLE_THICKNESS = 8;
+  
         
 
 
@@ -103,9 +110,10 @@
             apple.x = Math.floor(Math.random()*(canvas.width+1));
             apple.y = Math.floor(Math.random()*(canvas.height+1));
             checkLegalApple(apple.x, apple.y)
+
         }
 
-
+        // this might be able to go in generateapple? Is that the only place its called?
         function drawApple() {
             canvasContext.fillStyle = 'green';
             canvasContext.beginPath();
@@ -130,64 +138,56 @@
                 return generateApple();
             }
 
-            checkCollision(appleX, appleY);
+            // Write code to check its' not under a snake part
+
         }
 
 
-        function checkCollision(appleX, appleY) {
-            /* Checking its not underneath snake head
-             */
-            if (appleX >= snakeX && appleX <= snakeX+SNAKE_THICKNESS) {
-                if (appleY >= snakeY && appleY <= snakeY+SNAKE_THICKNESS) {
-                    return generateApple();
+
+
+
+
+        function checkCollision() {
+            // Checking colission with snake head
+            if (snakeHeadCenterPoint.x+(SNAKE_THICKNESS/2) > apple.x-(APPLE_THICKNESS/2) && snakeHeadCenterPoint.x-(SNAKE_THICKNESS/2) < apple.x+(APPLE_THICKNESS/2)) {
+                if (snakeHeadCenterPoint.y+(SNAKE_THICKNESS/2) > apple.y-(APPLE_THICKNESS/2) && snakeHeadCenterPoint.y-(SNAKE_THICKNESS/2) < apple.y+(APPLE_THICKNESS/2)) {
+                    // COLLISSION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    console.log("collide");
+                    // Fire grow code
+                    // growSnake();
                 }
             }
-            /* Checking its not underneath snake body
-             */
-            for (i = 0; i < snakeBody.length; i++) {
-                if (appleX >= snakeBody[i].x && appleX <= snakeBody[i].x+SNAKE_THICKNESS) {
-                    if (appleY >= snakeBody[i].y && appleY <= snakeBody[i].y+SNAKE_THICKNESS) {
-                       return generateApple();
-                    }
-                }
-            }
-            /*
-            if (snakeDirection != '') {
-                growSnake();
-            }
-            */
+            // Checking colission with snake body. If so, lose
         }
 
-        /*
+
+
+
+
+
+        /* TO DO.
+        store the current snakeX and snakeY in first object in snakeBody,
+        generate a new apple (in which it checks its a legal apple), 
+        draw a new apple
+
         function growSnake() {
             snakeBody
         }
         */
 
 
+
+
+
+
         function moveSnake() {
             if (snakeDirection != '') {
                 goThisWay(snakeDirection);
             }
-            checkCollision(apple.x, apple.y);
-            // think I need to grow snake here? Or do I need to be storing
-            // old SnakeX and SnakeY coordinates in another variable to draw.
+            checkCollision();
         }
 
 
-
-
-
-//ABOVE 3 green things is where I'm up to
-
-
-
-
-
-
-
-
-        
         function goThisWay(snakeDirection) {
             if (snakeDirection == 'right') {
                 snakeX += snakeSpeed;
@@ -218,9 +218,13 @@
             if (snakeY < 0) {
                 snakeY += canvas.height;
             }
+            // Set new snakeHeadCenterPoint
+            snakeHeadCenterPoint.x = snakeX + (SNAKE_THICKNESS/2);
+            snakeHeadCenterPoint.y = snakeY + (SNAKE_THICKNESS/2);
+
+            // Do all of the above apart from snakeheadcenterpoint on each object in
+            // snakebody
         }
-
-
 
         function drawEverything() {
             if (snakeDirection != '') {
