@@ -3,8 +3,9 @@
 <head>
     <script>
         /* NEXT STEPS:
-         * - CONFIRM GENERATE_APPLE CODE CHECKS UNDER SNAKE HEAD AND BODY, IF SO, CALLS ITSELF AGAIN UNTIL A LEGAL_APPLE IS PRODUCED
-         * - CHECK IF DRAWAPPLE IS ONLY DONE UPON FINDING A LEGAL_APPLE, ADD TO END OF LEGAL_APPLE CODE IF SO
+         * x CONFIRM GENERATE_APPLE CODE CHECKS UNDER SNAKE HEAD AND BODY, IF SO, CALLS ITSELF AGAIN UNTIL A LEGAL_APPLE IS PRODUCED
+         * x CHECK IF DRAWAPPLE IS ONLY DONE UPON FINDING A LEGAL_APPLE, ADD TO END OF LEGAL_APPLE CODE IF SO
+         * - WRITE GROWBODY CODE
          * - WRITE MOVE BODY CODE WHEN MOVING SNAKE AND BODY HAS LENGTH > 0
          * - WRITE DRAW BODY CODE
          * - TITLE SCREEN
@@ -43,7 +44,6 @@
             clearCanvas();
             drawSnakeHead();
             generateApple();
-            drawApple();
             /* Add directional arrow controls
              */
             document.addEventListener('keydown', function(event) {
@@ -109,8 +109,8 @@
         function generateApple() {
             apple.x = Math.floor(Math.random()*(canvas.width+1));
             apple.y = Math.floor(Math.random()*(canvas.height+1));
-            checkLegalApple(apple.x, apple.y)
-
+            checkLegalApple(apple.x, apple.y);
+            drawApple();
         }
 
         // this might be able to go in generateapple? Is that the only place its called?
@@ -138,7 +138,13 @@
                 return generateApple();
             }
 
-            // Write code to check its' not under a snake part
+            // Checking its not under snake head
+            if (snakeHeadCenterPoint.x+(SNAKE_THICKNESS/2) > apple.x-(APPLE_THICKNESS/2) && snakeHeadCenterPoint.x-(SNAKE_THICKNESS/2) < apple.x+(APPLE_THICKNESS/2)) {
+                if (snakeHeadCenterPoint.y+(SNAKE_THICKNESS/2) > apple.y-(APPLE_THICKNESS/2) && snakeHeadCenterPoint.y-(SNAKE_THICKNESS/2) < apple.y+(APPLE_THICKNESS/2)) {
+                    return generateApple();
+                }
+            }
+            console.log("legal apple found");
 
         }
 
@@ -148,13 +154,13 @@
 
 
         function checkCollision() {
-            // Checking colission with snake head
+            // Checking colission with apple
             if (snakeHeadCenterPoint.x+(SNAKE_THICKNESS/2) > apple.x-(APPLE_THICKNESS/2) && snakeHeadCenterPoint.x-(SNAKE_THICKNESS/2) < apple.x+(APPLE_THICKNESS/2)) {
                 if (snakeHeadCenterPoint.y+(SNAKE_THICKNESS/2) > apple.y-(APPLE_THICKNESS/2) && snakeHeadCenterPoint.y-(SNAKE_THICKNESS/2) < apple.y+(APPLE_THICKNESS/2)) {
                     // COLLISSION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     console.log("collide");
                     // Fire grow code
-                    // growSnake();
+                    growSnake();
                 }
             }
             // Checking colission with snake body. If so, lose
@@ -165,15 +171,20 @@
 
 
 
-        /* TO DO.
+        /*
         store the current snakeX and snakeY in first object in snakeBody,
         generate a new apple (in which it checks its a legal apple), 
         draw a new apple
+        */
 
         function growSnake() {
-            snakeBody
+            snakeBody.push({
+                x: snakeX,
+                y: snakeY});
+            console.log(snakeBody);
+            generateApple();
         }
-        */
+        
 
 
 
@@ -201,7 +212,6 @@
             if (snakeDirection == 'up') {
                 snakeY -= snakeSpeed;
             }
-
             /* Wrap through horizontal walls
              */
             if (snakeX > canvas.width) {
@@ -225,6 +235,17 @@
             // Do all of the above apart from snakeheadcenterpoint on each object in
             // snakebody
         }
+
+
+        /*
+        function moveSnakeBody(direction) {
+            for () {
+
+            }
+        }
+        */
+
+
 
         function drawEverything() {
             if (snakeDirection != '') {
