@@ -5,8 +5,9 @@
         /* NEXT STEPS:
          * x CONFIRM GENERATE_APPLE CODE CHECKS UNDER SNAKE HEAD AND BODY, IF SO, CALLS ITSELF AGAIN UNTIL A LEGAL_APPLE IS PRODUCED
          * x CHECK IF DRAWAPPLE IS ONLY DONE UPON FINDING A LEGAL_APPLE, ADD TO END OF LEGAL_APPLE CODE IF SO
-         * - WRITE GROWBODY CODE
-         * - WRITE MOVE BODY CODE WHEN MOVING SNAKE AND BODY HAS LENGTH > 0
+         * x WRITE GROWBODY CODE
+         * x WRITE MOVE BODY CODE WHEN MOVING SNAKE AND BODY HAS LENGTH > 0
+         *      - draw it out, watch in debug, find where I need to move the body so it's one step behind
          * - WRITE DRAW BODY CODE
          * - TITLE SCREEN
          */
@@ -18,7 +19,7 @@
          * Have to hardcode canvas.width/2 as 300 as canvas.width isn't 
          * set until window.onload
          */
-        const SNAKE_THICKNESS = 10;
+        const SNAKE_THICKNESS = 12;
         var snakeX = 300 - (SNAKE_THICKNESS/2);
         var snakeY = 300 - (SNAKE_THICKNESS/2);
         var snakeHeadCenterPoint = {
@@ -26,11 +27,11 @@
             y: snakeY+(SNAKE_THICKNESS/2)
             }
         var snakeBody = [];
-        var snakeSpeed = 3;
+        var snakeSpeed = 5;
         var snakeDirection = '';
         
         var apple = {};
-        const APPLE_THICKNESS = 8;
+        const APPLE_THICKNESS = 10;
   
         
 
@@ -178,12 +179,64 @@
         */
 
         function growSnake() {
+            var backX;
+            var backY;
+            if (snakeBody.length == 0) {
+                // use snake head coords
+                switch (snakeDirection) {
+                    case 'right':
+                        backX = snakeX - snakeSpeed;
+                        backY = snakeY;
+                        break;
+                    case 'left':
+                        backX = snakeX + snakeSpeed;
+                        backY = snakeY;
+                        break;
+                    case 'down':
+                        backX = snakeX;
+                        backY = snakeY - snakeSpeed;
+                        break;
+                    case 'up':
+                        backX = snakeX;
+                        backY = snakeY + snakeSpeed;
+                        break;
+                }
+            } else {
+                switch (snakeDirection) {
+                    case 'right':
+                        backX = snakeBody[snakeBody.length-1].x - snakeSpeed;
+                        backY = snakeY;
+                        break;
+                    case 'left':
+                        backX = snakeBody[snakeBody.length-1].x + snakeSpeed;
+                        backY = snakeY;
+                        break;
+                    case 'down':
+                        backX = snakeX;
+                        backY = snakeBody[snakeBody.length-1].y - snakeSpeed;
+                        break;
+                    case 'up':
+                        backX = snakeX;
+                        backY = snakeBody[snakeBody.length-1].y + snakeSpeed;
+                        break;
+                }
+            }
+            // Push new tail position onto snakeBody
+            snakeBody.push({
+                x: backX,
+                y: backY
+            });
+            generateApple();
+        }
+
+            /* OLD CODE
             snakeBody.push({
                 x: snakeX,
                 y: snakeY});
             console.log(snakeBody);
             generateApple();
-        }
+            */
+        
         
 
 
@@ -193,13 +246,12 @@
 
         function moveSnake() {
             if (snakeDirection != '') {
-                goThisWay(snakeDirection);
+                goThisWay();
             }
-            checkCollision();
         }
 
 
-        function goThisWay(snakeDirection) {
+        function goThisWay() {
             if (snakeDirection == 'right') {
                 snakeX += snakeSpeed;
             }
@@ -231,19 +283,46 @@
             // Set new snakeHeadCenterPoint
             snakeHeadCenterPoint.x = snakeX + (SNAKE_THICKNESS/2);
             snakeHeadCenterPoint.y = snakeY + (SNAKE_THICKNESS/2);
-
-            // Do all of the above apart from snakeheadcenterpoint on each object in
-            // snakebody
+            moveSnakeBody();
+            checkCollision();
         }
+        
 
-
-        /*
-        function moveSnakeBody(direction) {
-            for () {
-
+        function moveSnakeBody() {
+            if (snakeBody.length > 0) {
+                for (var i = 0; i < snakeBody.length; i++) {
+                    if (snakeDirection == 'right') {
+                        snakeBody[i].x += snakeSpeed;
+                    }
+                    if (snakeDirection == 'left') {
+                        snakeBody[i].x -= snakeSpeed;
+                    }
+                    if (snakeDirection == 'down') {
+                        snakeBody[i].y += snakeSpeed;
+                    }
+                    if (snakeDirection == 'up') {
+                        snakeBody[i].y -= snakeSpeed;
+                    }
+                    /* Wrap through horizontal walls
+                    */
+                    if (snakeBody[i].x > canvas.width) {
+                        snakeBody[i].x -= canvas.width;
+                    }
+                    if (snakeBody[i].x < 0) {
+                        snakeBody[i].x += canvas.width;
+                    }
+                    /* Wrap through vertical walls
+                    */
+                    if (snakeBody[i].y > canvas.height) {
+                        snakeBody[i].y -= canvas.height;
+                    }
+                    if (snakeBody[i].y < 0) {
+                        snakeBody[i].y += canvas.height;
+                    }
+                }
             }
         }
-        */
+        
 
 
 
