@@ -169,15 +169,6 @@
 
 
 
-
-
-
-        /*
-        store the current snakeX and snakeY in first object in snakeBody,
-        generate a new apple (in which it checks its a legal apple), 
-        draw a new apple
-        */
-
         function growSnake() {
             var backX;
             var backY;
@@ -228,18 +219,6 @@
             });
             generateApple();
         }
-
-            /* OLD CODE
-            snakeBody.push({
-                x: snakeX,
-                y: snakeY});
-            console.log(snakeBody);
-            generateApple();
-            */
-        
-        
-
-
 
 
 
@@ -342,24 +321,8 @@
                     }
                 }
             }
-            
-            /* OLD CODE
-             * Snake not growing so redraw same size in new position,
-             * currently blanking whole page but I don't think that will
-             * work for fluid motion and directional changes, may need to
-             * loop through array of snakePositions and draw a 1x1 pixel
-             * everywhere the snake is not. Actually, could just redraw the
-             * position balck that gets shift()'d off the snakePositions array.
-             *
-            canvasContext.fillStyle = 'black';
-            canvasContext.fillRect(0,0,canvas.width, canvas.height);
-
-            canvasContext.fillStyle = 'white';
-            canvasContext.fillRect(snakeX,snakeY,SNAKE_THICKNESS,SNAKE_THICKNESS);
-            */
         }
-    
-    
+
     </script>
 </head>
 
